@@ -68,7 +68,7 @@ export default function BatchExport({ segments, jobNumber, jobName, operator }: 
         blobUrlRef.current = url;
 
         const ext = mode === 'zip' ? 'zip' : 'pdf';
-        const fileName = `BLD_PrepSheets_Job${jobNumber || 'Unknown'}_${segments.length}segments.${ext}`;
+        const fileName = `Field_PrepSheets_Job${jobNumber || 'Unknown'}_${segments.length}segments.${ext}`;
 
         setExportState({ status: 'done', mode, blobUrl: url, fileName });
       } catch (err) {

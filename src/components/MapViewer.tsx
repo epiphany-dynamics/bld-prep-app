@@ -29,7 +29,7 @@ const PLACES_OPACITY = 0.9;
 // Nominatim requires a contact UA + rate limit of 1 req/sec.
 // Ref: https://operations.osmfoundation.org/policies/nominatim/
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
-const NOMINATIM_USER_AGENT = 'BLD-Prep-Sheet-App/1.0 (bld-prep-sheet)';
+const NOMINATIM_USER_AGENT = 'Field-Prep-Sheet-App/1.0 (field-prep-sheet)';
 const NOMINATIM_MIN_INTERVAL_MS = 1100;
 
 // Default crop box size (screen pixels). User can resize; the overlay snaps
@@ -283,7 +283,7 @@ export default function MapViewer({ initialAddress, onCrop, onClose }: Props) {
           <circle cx="14" cy="14" r="5" fill="#ffffff"/>
         </svg>`;
       const icon = L.divIcon({
-        className: 'bld-map-pin',
+        className: 'field-prep-map-pin',
         html: pinSvg,
         iconSize: [28, 40],
         iconAnchor: [14, 40],
@@ -295,7 +295,7 @@ export default function MapViewer({ initialAddress, onCrop, onClose }: Props) {
         permanent: true,
         direction: 'right',
         offset: [10, 0],
-        className: 'bld-map-pin-tooltip',
+        className: 'field-prep-map-pin-tooltip',
       });
       marker.on('dragend', () => {
         const latlng = marker.getLatLng();

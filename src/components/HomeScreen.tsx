@@ -166,7 +166,7 @@ export default function HomeScreen({ recentProjects, onFileUpload, onLoadProject
                 { step: '1', title: 'Upload Spreadsheet', desc: 'Drop your Excel inspection file and select the Mainline tracking sheet.' },
                 { step: '2', title: 'Map Columns', desc: 'Auto-detects fields like Repair #, Pipe Size, MH numbers. Adjust if needed.' },
                 { step: '3', title: 'Edit Segments', desc: 'Fill in field observations, traffic, water flow, and annotate the schematic map.' },
-                { step: '4', title: 'Export PDFs', desc: 'Generate print-ready prep sheets that match the BLD template exactly.' },
+                { step: '4', title: 'Export PDFs', desc: 'Generate print-ready prep sheets from the mapped field template.' },
               ].map(item => (
                 <div key={item.step} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                   <div style={{

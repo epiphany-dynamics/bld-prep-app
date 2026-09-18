@@ -61,7 +61,7 @@ interface PendingMapping {
 }
 
 export default function App() {
-  // MANDATORY: every page load = clean slate. BLD techs use spreadsheets
+  // MANDATORY: every page load = clean slate. Field operators use spreadsheets
   // with different column formats within minutes of each other; any saved
   // mapping/draft from a prior sheet will corrupt the next one. Refresh
   // must wipe all persisted data. This blocks render until the wipe finishes.
@@ -77,7 +77,7 @@ export default function App() {
           db.projectPlans.clear(),
         ]);
       } catch (err) {
-        console.warn('[BLD] IndexedDB wipe error (proceeding anyway):', err);
+        console.warn('[FieldPrep] IndexedDB wipe error (proceeding anyway):', err);
       }
       try {
         sessionStorage.clear();
@@ -141,14 +141,14 @@ export default function App() {
   // Process a specific sheet from a buffer
   const processSheet = useCallback(async (buffer: ArrayBuffer, fileName: string, sheetName: string) => {
     try {
-      console.log('[BLD] processSheet:', sheetName);
+      console.log('[FieldPrep] processSheet:', sheetName);
       const { headers, rows } = parseExcelFile(buffer, sheetName);
-      console.log('[BLD] Parsed:', headers.length, 'headers,', rows.length, 'rows');
+      console.log('[FieldPrep] Parsed:', headers.length, 'headers,', rows.length, 'rows');
       const fingerprint = fingerprintHeaders(headers);
       const savedMap = await getSavedMapping(fingerprint);
 
       if (savedMap && !forceRemapRef.current) {
-        console.log('[BLD] Found saved mapping, skipping to settings');
+        console.log('[FieldPrep] Found saved mapping, skipping to settings');
         forceRemapRef.current = false;
         const { confident, fallbacks: fb } = autoMapColumns(headers);
         // Patch saved mapping: auto-fill any fields added after this mapping was originally saved
@@ -156,7 +156,7 @@ export default function App() {
         for (const [field, colIdx] of Object.entries(confident) as [PrepField, number][]) {
           if (patchedMapping[field] == null) {
             patchedMapping[field] = colIdx;
-            console.log(`[BLD] Auto-patched missing field '${field}' → col ${colIdx}`);
+            console.log(`[FieldPrep] Auto-patched missing field '${field}' → col ${colIdx}`);
           }
         }
         const segments = rowsToSegments(rows, patchedMapping, fb);
@@ -186,15 +186,15 @@ export default function App() {
         setSelectedSegments(new Set());
         setScreen('settings');
       } else {
-        console.log('[BLD] No saved mapping, showing column mapper');
+        console.log('[FieldPrep] No saved mapping, showing column mapper');
         const { confident, uncertain, fallbacks } = autoMapColumns(headers);
-        console.log('[BLD] Confident fields:', Object.keys(confident).length, 'Uncertain:', uncertain.length);
+        console.log('[FieldPrep] Confident fields:', Object.keys(confident).length, 'Uncertain:', uncertain.length);
         setPendingFile(null);
         setPendingMapping({ headers, rows, fileName, fingerprint, confident, uncertain, fallbacks });
         setScreen('mapping');
       }
     } catch (err) {
-      console.error('[BLD] processSheet error:', err);
+      console.error('[FieldPrep] processSheet error:', err);
       alert('Error processing sheet: ' + (err instanceof Error ? err.message : String(err)));
     }
   }, []);
@@ -214,10 +214,10 @@ export default function App() {
   }, [processSheet]);
 
   const handleSheetSelect = useCallback(async (sheetName: string) => {
-    console.log('[BLD] handleSheetSelect:', sheetName);
+    console.log('[FieldPrep] handleSheetSelect:', sheetName);
     const pf = pendingFileRef.current;
     if (!pf) {
-      console.error('[BLD] handleSheetSelect: pendingFile is null!');
+      console.error('[FieldPrep] handleSheetSelect: pendingFile is null!');
       return;
     }
     await processSheet(pf.buffer, pf.fileName, sheetName);
@@ -225,22 +225,22 @@ export default function App() {
 
   const handleMappingComplete = useCallback(async (mapping: Record<PrepField, number | null>) => {
     try {
-      console.log('[BLD] handleMappingComplete called');
+      console.log('[FieldPrep] handleMappingComplete called');
       const pm = pendingMappingRef.current;
       if (!pm) {
-        console.error('[BLD] handleMappingComplete: pendingMapping is null!');
+        console.error('[FieldPrep] handleMappingComplete: pendingMapping is null!');
         return;
       }
       const { fingerprint, headers, rows, fileName, fallbacks } = pm;
 
-      console.log('[BLD] Saving mapping...');
+      console.log('[FieldPrep] Saving mapping...');
       await saveMapping({ fingerprint, mapping, fallbacks, savedAt: Date.now() });
-      console.log('[BLD] Mapping saved, building segments...');
+      console.log('[FieldPrep] Mapping saved, building segments...');
 
       const segments = rowsToSegments(rows, mapping, fallbacks);
       rawRowsRef.current = rows;
       const warnings = checkMappingHealth(segments, mapping, headers, rows);
-      console.log('[BLD] Built', segments.length, 'segments');
+      console.log('[FieldPrep] Built', segments.length, 'segments');
       const projectId = (crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`);
       const proj: AppProject = {
         id: projectId,
@@ -263,9 +263,9 @@ export default function App() {
       setDateFilter({ start: null, end: null });
       setSelectedSegments(new Set());
       setScreen('settings');
-      console.log('[BLD] Navigated to settings screen');
+      console.log('[FieldPrep] Navigated to settings screen');
     } catch (err) {
-      console.error('[BLD] handleMappingComplete error:', err);
+      console.error('[FieldPrep] handleMappingComplete error:', err);
       alert('Error saving mapping: ' + (err instanceof Error ? err.message : String(err)));
     }
   }, []);
@@ -318,7 +318,7 @@ export default function App() {
         await savePlans(proj.id, storageBuffer, file.name, numPages);
       }
     } catch (err) {
-      console.error('[BLD] Plans upload error:', err);
+      console.error('[FieldPrep] Plans upload error:', err);
       alert('Error loading plans PDF: ' + (err instanceof Error ? err.message : String(err)));
     }
   }, []);
@@ -638,7 +638,7 @@ export default function App() {
       }} className="px-6 py-3 flex items-center gap-4">
         <div className="flex items-center gap-3">
           <div style={{ background: '#FFFFFF', borderRadius: 6, padding: '3px 10px' }}>
-            <span style={{ color: 'var(--nav-bg)', fontWeight: 700, fontSize: 14, letterSpacing: '0.05em' }}>BLD</span>
+            <span style={{ color: 'var(--nav-bg)', fontWeight: 700, fontSize: 14, letterSpacing: '0.05em' }}>FIELD</span>
           </div>
           <span className="font-semibold text-base" style={{ color: 'var(--nav-text)' }}>
             Prep Sheet Tool

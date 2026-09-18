@@ -1,6 +1,6 @@
 // PDF generation engine for field-service prep sheets
 // Uses jsPDF to programmatically draw the prep sheet matching the 2026
-// BLD Mainline Prep template:
+// Mainline prep template:
 //   - Top header: OPERATOR | READY TO LINE | DATE | JOB # | REPAIR # | JOB NAME
 //   - USMH / DSMH (not FROM/TO)
 //   - USMH DEPTH / DSMH DEPTH
@@ -14,7 +14,7 @@
 import { jsPDF } from 'jspdf';
 import JSZip from 'jszip';
 import type { Segment, SegmentObservations, SegmentFieldKey } from './types';
-import { BLD_LOGO_BASE64 } from './bld-logo-data';
+
 
 export interface PdfInput {
   segment: Segment;
@@ -308,22 +308,16 @@ function renderPage(doc: jsPDF, input: PdfInput): void {
 
   let y = 10;
 
-  // ── LOGO ────────────────────────────────────────────────────────────────
-  // Centered logo image. Original aspect ratio ~600x163, scale to fit ~60mm wide.
-  const logoW = 60;
-  const logoH = 16.3; // maintain aspect ratio
-  const logoX = (PAGE_W - logoW) / 2;
-  try {
-    doc.addImage(BLD_LOGO_BASE64, 'PNG', logoX, y, logoW, logoH);
-  } catch {
-    // Fallback: text-based logo if image fails
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(BLACK);
-    doc.text('BLD SERVICES, LLC', PAGE_W / 2, y + 10, { align: 'center' });
-  }
+  // ── TITLE ───────────────────────────────────────────────────────────────
+  // The public demo intentionally uses a neutral title instead of shipping
+  // client branding or reference-form artwork.
+  const titleH = 16;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(BLACK);
+  doc.text('FIELD PREP SHEET', PAGE_W / 2, y + 10, { align: 'center' });
 
-  y += logoH + 8;
+  y += titleH + 8;
 
   // ── ROW 1 (NEW): OPERATOR:___   READY TO LINE: YES / NO ─────────────────
   const r1Y = y;
@@ -541,7 +535,7 @@ export async function generatePrepSheetPdf(input: PdfInput): Promise<jsPDF> {
   doc.setProperties({
     title: `Field Prep Sheet - Repair #${input.segment.repairNumber}`,
     subject: `${input.segment.streetName} - Job #${input.jobNumber}`,
-    author: 'Field Operations Demo',
+    author: 'Field Prep Sheet Demo',
     creator: 'Field Prep Sheet Tool',
   });
 

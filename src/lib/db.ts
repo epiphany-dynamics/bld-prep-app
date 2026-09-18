@@ -10,7 +10,7 @@ interface ProjectPlans {
   savedAt: number;
 }
 
-class BldDatabase extends Dexie {
+class FieldPrepDatabase extends Dexie {
   columnMappings!: Table<ColumnMapping, number>;
   segmentDrafts!: Table<SegmentDraft, number>;
   projectDefaults!: Table<ProjectDefaults, number>;
@@ -18,7 +18,7 @@ class BldDatabase extends Dexie {
   projectPlans!: Table<ProjectPlans, number>;
 
   constructor() {
-    super('BLDPrepSheet');
+    super('FieldPrepSheet');
     this.version(1).stores({
       columnMappings: '++id, fingerprint',
       segmentDrafts: '++id, [projectId+segmentId]',
@@ -41,7 +41,7 @@ class BldDatabase extends Dexie {
   }
 }
 
-export const db = new BldDatabase();
+export const db = new FieldPrepDatabase();
 
 // ColumnMapping helpers
 export async function getSavedMapping(fingerprint: string): Promise<ColumnMapping | undefined> {

@@ -1,0 +1,3 @@
+operator,ready_to_line,date,job_number,job_name,repair_number,usmh,dsmh,street_name,us_depth,ds_depth,pipe_size,pipe_length,pipe_material,liner_length,observations,comments
+Taylor Example,Yes,2026-01-15,DEMO-1042,Maple Creek Demonstration,1,DEMO-001,DEMO-002,Example Avenue,8.5,8.1,8,142,PVC,144,Minor root intrusion noted,Synthetic data only
+Taylor Example,No,2026-01-15,DEMO-1042,Maple Creek Demonstration,2,DEMO-002,DEMO-003,Sample Road,7.8,7.4,10,96,Clay,98,Access cover requires follow-up,Synthetic data only

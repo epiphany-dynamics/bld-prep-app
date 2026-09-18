@@ -68,8 +68,8 @@ export function parseExcelFile(buffer: ArrayBuffer, sheetName?: string): ParsedE
 
   if (rawData.length === 0) throw new Error('Spreadsheet appears to be empty.');
 
-  // Detect header row. Different BLD divisions use different layouts:
-  //   - Original BLD format: rows 1-2 are grouping labels, row 3 is the real header row
+  // Detect header row. Different field-service teams use different layouts:
+  //   - Some exports use grouping labels before the real header row
   //   - PSR / Mainline Tracker format: row 1 is the header row directly
   // Pick the FIRST row in the first 10 that looks like headers (mostly text,
   // short values, 5+ cells). Using "most non-empty cells" alone picks data
@@ -91,7 +91,7 @@ export function parseExcelFile(buffer: ArrayBuffer, sheetName?: string): ParsedE
   };
 
   // Among the first 10 rows, pick the header-like row with the MOST cells.
-  // This distinguishes grouping labels (e.g. row 2 of the original BLD sheet —
+  // This distinguishes grouping labels that appear before the real header row
   // 5 "Design Information" / "Pre CCTV Information" style section labels)
   // from the real column header row (row 3 with 30+ individual column labels).
   let headerRowIndex = -1;

@@ -1,4 +1,4 @@
-// Core types for Field Prep Sheet App
+// Core types for the field prep sheet workflow
 
 export interface AnnotationData {
   id: string;
